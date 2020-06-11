@@ -1,8 +1,28 @@
 const express = require('express');
 const Joi = require('joi');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const logger = require('./logger');
 
 const app = express();
-app.use(express.json());
+
+// Built-in Middleware functions
+app.use(express.json()); // json parser to req.body
+app.use(express.urlencoded({ extended: true })); // reads html form data
+app.use(express.static('public')); // serves static files
+
+// Third-party Middleware functions
+app.use(helmet()); // secure http headers
+app.use(morgan('tiny')); // http request logger
+
+// Custom Middleware function in a module
+app.use(logger);
+
+// Custom Middleware function
+app.use((req, res, next) => {
+    console.log('Authenticating...');
+    next();
+});
 
 const courses = [
     { id: 1, name: 'course1' },
