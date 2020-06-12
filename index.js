@@ -1,3 +1,6 @@
+const startupDebug = require('debug')('app:startup');
+const dbDebug = require('debug')('app:db');
+
 const config = require('config');
 const express = require('express');
 const helmet = require('helmet');
@@ -21,11 +24,11 @@ app.use(helmet()); // secure http headers
 // Configuration
 console.log(`Application name: ${config.get('name')}`);
 console.log(`Mail Server: ${config.get('mail.host')}`);
-console.log(`Mail Password: ${config.get('mail.password')}`);
+//console.log(`Mail Password: ${config.get('mail.password')}`);
 
 if (app.get('env') === 'development') {
     app.use(morgan('tiny')); // http request logger
-    console.log('Morgan enabled...');
+    startupDebug('Morgan enabled...');
 }
 
 // Custom Middleware function in a module
@@ -36,6 +39,8 @@ app.use((req, res, next) => {
     console.log('Authenticating...');
     next();
 });
+
+dbDebug('Connected to the database...'); // testing 
 
 const courses = [
     { id: 1, name: 'course1' },
