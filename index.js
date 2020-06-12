@@ -1,10 +1,14 @@
+const config = require('config');
 const express = require('express');
-const Joi = require('joi');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const Joi = require('joi');
 const logger = require('./logger');
 
 const app = express();
+
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`app: ${app.get('env')}`);
 
 // Built-in Middleware functions
 app.use(express.json()); // json parser to req.body
@@ -13,7 +17,16 @@ app.use(express.static('public')); // serves static files
 
 // Third-party Middleware functions
 app.use(helmet()); // secure http headers
-app.use(morgan('tiny')); // http request logger
+
+// Configuration
+console.log(`Application name: ${config.get('name')}`);
+console.log(`Mail Server: ${config.get('mail.host')}`);
+console.log(`Mail Password: ${config.get('mail.password')}`);
+
+if (app.get('env') === 'development') {
+    app.use(morgan('tiny')); // http request logger
+    console.log('Morgan enabled...');
+}
 
 // Custom Middleware function in a module
 app.use(logger);
